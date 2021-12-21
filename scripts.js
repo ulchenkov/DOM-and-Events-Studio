@@ -98,8 +98,6 @@ class MissionControl {
     #autopilotDirection;
     #autopilotTimer;
 
-
-
     constructor() {
         this.#rocketId = document.getElementById("rocket");
         this.#background = document.getElementById("shuttleBackground");
@@ -153,6 +151,7 @@ class MissionControl {
                     this.#autoPilotStatus = !this.#autoPilotStatus;
                     clearTimeout(this.#autopilotTimer);
                 }
+                this.land();
                 break;
             case this.#missionButtons.abort : 
                 if (confirm("Confirm that you want to abort the mission.")) {
@@ -208,6 +207,12 @@ class MissionControl {
         }
         this.dispalyMissionStatus();
         this.#autopilotTimer = setTimeout(autoPilot, 50);
+    }
+    land() {
+        let currentPosition = this.#rocket.position;
+        let deltaX = currentPosition.x - this.#startPosition.x;
+        let deltaY = currentPosition.y - this.#startPosition.y;
+        console.log(deltaX, deltaY);
     }
 
     dispalyMissionStatus() {
