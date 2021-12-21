@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <title>Flight Simulator</title>
         <link rel = "stylesheet" type = "text/css" href = "styles.css" />
         <script src = "scripts.js"></script>
     </head>
     <body>
         <div style="text-align: center;">
-            <h1>Flight Simulator</h1>
+            <p id="title">MISSION TITLE</p>
+                <h1>Flight Simulator</h1>
             <h2>Current Flight Status</h2>
-            <p id = "flightStatus">Space shuttle ready for takeoff</p>
+            <p id = "flightStatus">&nbsp;!!</p>
             <h2>Shuttle Trajectory</h2>
         </div>
         <div style="text-align: center; height: 400px; width: 100%;" >
@@ -23,18 +25,21 @@
                 <img src = "LaunchCode_rocketline_white.png" height = "75" width = "75" id = "rocket"/>
             </div>
             <div style = "text-align: center; display: inline-block;">
-                    <button>Up</button>
-                    <button>Down</button>
-                    <button>Right</button>
-                    <button>Left</button>
+                    <p id="warning">&nbsp;</p><br>
+                    <button class="rocketControl" id="move-Up">Up</button>
+                    <button class="rocketControl" id="move-Down">Down</button>
+                    <button class="rocketControl" id="move-Left">Left</button>
+                    <button class="rocketControl" id="move-Right">Right</button><br><br>
+                    <button class="missionControl" id="autopilot">Turn ON autopilot</button><br>
+                    <p id="autopilotStatus"style="color: gray;">&nbsp;</p>
                     <h3>Space Shuttle Height</h3>
-                    <p id="spaceShuttleHeight">0</p><p style = "display: inline-block;"> miles</p>
+                    <p id="spaceShuttleHeight">&nbsp;</p><p style = "display: inline-block;"> miles</p>
             </div>
         </div>
         <div style="text-align: center;">
-            <button id = "takeoff">Take off</button>
-            <button id = "landing">Land</button>
-            <button id = "missionAbort">Abort Mission</button>
+            <button class="missionControl" id = "takeoff">Take off</button>
+            <button class="missionControl" id = "landing">Land</button>
+            <button class="missionControl" id = "missionAbort">Abort Mission</button>
     </div>
     </body>
 </html>
