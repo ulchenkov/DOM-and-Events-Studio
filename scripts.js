@@ -3,6 +3,9 @@
 let mission;
 const DEFAULT_DELTA = 10; //px
 const SCALE = 1000;
+const AUTOPILOT_SPEED = 3; //px
+const AUTOPILOT_TIMER = 50; //ms
+
 const DIRECTIONS = {
     Up : {deltaX : 0, deltaY : -1},
     Down : {deltaX : 0, deltaY : 1},
@@ -97,6 +100,7 @@ class MissionControl {
     #startPosition;
     #autopilotDirection;
     #autopilotTimer;
+    #landingTimer;
 
     constructor() {
         this.#rocketId = document.getElementById("rocket");
@@ -155,12 +159,15 @@ class MissionControl {
                 break;
             case this.#missionButtons.abort : 
                 if (confirm("Confirm that you want to abort the mission.")) {
-                    this.#rocketFlyStatus =FILGHT_STATUS.missionAborted;
+                    if (this.#rocketFlyStatus === FILGHT_STATUS.landing) {
+                        clearTimeout(this.#landingTimer);
+                    }
                     if (this.#autoPilotStatus) {
                         this.#autoPilotStatus = !this.#autoPilotStatus;
                         clearTimeout(this.#autopilotTimer);
                     }
                     this.#rocket.setPosition(this.#startPosition);
+                    this.#rocketFlyStatus =FILGHT_STATUS.missionAborted;
                 }
                 break;
             case this.#missionButtons.autopilot : 
@@ -194,8 +201,8 @@ class MissionControl {
     autoPilot() {
         let currentPosition = this.#rocket.position;
         let tryMove = this.#rocket.setPosition({
-            x : currentPosition.x + this.#autopilotDirection.x,
-            y : currentPosition.y + this.#autopilotDirection.y
+            x : currentPosition.x + this.#autopilotDirection.x * AUTOPILOT_SPEED,
+            y : currentPosition.y + this.#autopilotDirection.y * AUTOPILOT_SPEED
         });
         if (!tryMove.isCompeted) {
             if (!tryMove.x) {
@@ -206,13 +213,35 @@ class MissionControl {
             }
         }
         this.dispalyMissionStatus();
-        this.#autopilotTimer = setTimeout(autoPilot, 50);
+        this.#autopilotTimer = setTimeout(autoPilot, AUTOPILOT_TIMER);
     }
     land() {
         let currentPosition = this.#rocket.position;
-        let deltaX = currentPosition.x - this.#startPosition.x;
-        let deltaY = currentPosition.y - this.#startPosition.y;
-        console.log(deltaX, deltaY);
+        if (currentPosition.x === this.#startPosition.x && 
+            currentPosition.y === this.#startPosition.y) {
+                this.#rocketFlyStatus = FILGHT_STATUS.onTheGroud;
+                this.dispalyMissionStatus();
+        } else {
+            let deltaX = this.#startPosition.x - currentPosition.x;
+            let deltaY = this.#startPosition.y - currentPosition.y;
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (Math.round(deltaY / deltaX) === 1) {
+                    deltaY = deltaY / Math.abs(deltaY);
+                } else {
+                    deltaY = 0;
+                }
+                deltaX = deltaX / Math.abs(deltaX);
+            } else {
+                if (Math.round(deltaY / deltaX) === 1) {
+                    deltaX = deltaX / Math.abs(deltaX);
+                } else {
+                    deltaX = 0;
+                }
+                deltaY = deltaY / Math.abs(deltaY);
+            }
+            this.#rocket.setPosition({x : currentPosition.x + deltaX, y : currentPosition.y + deltaY});
+            this.#landingTimer = setTimeout(land, AUTOPILOT_TIMER);
+        }
     }
 
     dispalyMissionStatus() {
@@ -274,6 +303,10 @@ function missionControlButtonsHandler(event) {
 
 function autoPilot() {
     mission.autoPilot();
+}
+
+function land() {
+    mission.land();
 }
 
 window.addEventListener("load", init);
