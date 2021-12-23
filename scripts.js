@@ -220,7 +220,6 @@ class MissionControl {
         if (currentPosition.x === this.#startPosition.x && 
             currentPosition.y === this.#startPosition.y) {
                 this.#rocketFlyStatus = FILGHT_STATUS.onTheGroud;
-                this.dispalyMissionStatus();
         } else {
             let deltaX = this.#startPosition.x - currentPosition.x;
             let deltaY = this.#startPosition.y - currentPosition.y;
@@ -242,6 +241,7 @@ class MissionControl {
             this.#rocket.setPosition({x : currentPosition.x + deltaX, y : currentPosition.y + deltaY});
             this.#landingTimer = setTimeout(land, AUTOPILOT_TIMER);
         }
+        this.dispalyMissionStatus();
     }
 
     dispalyMissionStatus() {
@@ -286,11 +286,11 @@ class MissionControl {
             this.#shuttleHeightDisplay.innerHTML = 0;
         }
     }
-
 }
 
 function init() { 
     mission = new MissionControl();
+    document.addEventListener("keydown", (event) => console.log(event.key));
 }
 
 function rocketControlButtonsHandler(event) {
